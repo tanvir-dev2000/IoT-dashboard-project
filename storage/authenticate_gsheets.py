@@ -13,7 +13,7 @@ SCOPES = [
 ]
 
 def get_gsheets_client():
-    creds_dict = json.loads(st.secrets["GOOGLE_CREDS_JSON"])
-    creds = Credentials.from_service_account_info(creds_dict)
+    creds = Credentials.from_service_account_file(env.SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    client = gspread.authorize(creds)
     client = gspread.authorize(creds)
     return client

@@ -7,3 +7,40 @@
 
 *.pyc
 __pycache__/
+
+# --- Virtual Environment ---
+# Ignore the virtual environment folder
+venv/
+env/
+
+# --- IDE and Editor Config ---
+# Ignore JetBrains IDE folder
+.idea/
+
+# --- Secrets and Credentials (IMPORTANT!) ---
+# Ignore Streamlit secrets file
+.streamlit/secrets.toml
+
+# Ignore Google Cloud service account key files
+service_account/*.json
+
+# Ignore local environment variables file
+.env
+
+# --- Databases ---
+# Ignore local database files
+*.db
+
+# --- Python ---
+# Ignore Python cache and compiled files
+*.pyo
+*.pyd
+
+# --- Nested Project ---
+# Ignore the cloned project folder to avoid nested git repositories
+IoT-dashboard-project/
+
+# --- OS-specific files ---
+# Ignore macOS and Windows generated files
+.DS_Store
+Thumbs.db
