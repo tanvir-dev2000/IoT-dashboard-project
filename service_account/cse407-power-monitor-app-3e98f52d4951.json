@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "cse407-power-monitor-app",
+  "private_key_id": "3e98f52d495166a66e6be4066a5bb98ad27cc189",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQClrOtbJOyw4mOD\nmQWKQtOer8Gy495MsTAYJH0A9KpS/F1vJOyC2PSQVdrQKK6V3XOG6b2hKXR68FWe\ndQ3ghXSgXdx9tiBvE9VrNfmdLGlT41ezBAUo4gOE3vPiTyh5XCnNn7Q9AwnKUv7O\nbyD8wOQXzaFBkviw5Q38JHzquNlYWTBRSOGGF51eyrzebS2lkSEELGXtoyhqSdoZ\nKGo+gI7VNdaWA6PkxsHTGT9Fcbmb/l3V4z6pHrAtY9SWt+7qJiz7na8G4ee1nJ/B\ntR0HIHys26DNkb6mO+93YvoE96Q8gcOY96IMm7YcVdx6++QHzKnJiGQypHl4q23M\n9TaAkBOZAgMBAAECggEABPs6hl6JWVYtPM80ifAxcbOCJPFSBUdMlWU/dvBkUKNy\n4b0f+V0xmUdjkV+vxCTI7PUJNRfMf0fLozyMwsPwekPoNcVsmzpi79rLGw0zS4jp\n4aGM0Cpfhba4aYUMx/1b6mlTX4RAXpt5Ota/jKn2EbsmjpSvMo5oibzFHr+ZFV1o\nvXFJWrYIq+seeVdWcdur64ppXSu2HxgLdyeJa7h1j+S0px/SzayR0BVbrmQB88kW\najLnYzLLX4JlIQBbj1LvFla2nNm4InpqTI8ymp/lNiGnFJJ9ID5lP76eJ+mwmOSj\n3DjYI1F7zyPDZGhPnlOQ8tRvqdvdPGxCqiJkQ7B6CQKBgQDaBZ4hSxVTBez7DrJJ\nYIl2g8ica2dA+p7dsZAN6QWuXzubgUfWqe39JlqMfnb6WNndEG+XSKcgqY31dKq9\n3dZmCK3oljfyKrToOFE2tzSI+q46zfzY5IA2ZFl8FtddagkvTK1mBDo1zHAQkUML\nXL/LTwt51BlapGJvHcfoyT1RnQKBgQDCiPvo9aXvaXUwPtU6P7AyPIfJTZut6Jku\nAb2SaRzpHpLw/GCcHzDrC4/DolGNNNi8XZt2QVQVjJHoTjmMz3JYrfocHJCgnd3O\nqkJszHJOgQWNNDBRCZL+wZjNb1kMep3ltV2cNvCnAtkPgyBzgq/xdbIumhtADO3Y\n5G9xsUA3LQKBgFi0AGo7SinFN23NxOvlwwfdBjnd2NyvGwPHwnxmWlFfnbjfGINW\nD+X3PM/8hBvHGpy+myhJ/vVjBsbe+LjXEOvijB8dPxXgGkqA30oLr+wrUcfLFxyH\nm0KGAYJjKKxw/9umrsXa4nQRAWc8MrLkwYPOXTTr/oTKbOIYk8U6WyBhAoGBAJh4\nkSjH0CTTfRwxQyKCZHEbbDnk8A3gbp7WkmS8qgI1CmqDBJ2Y/NhcmXN2N4D7WJxa\nqcyH64VwRbPUC9tHhJHo2k1KPjkFQqIGZEWuADFzgoxnyS7a2DGAP2lUynCzcipm\nelZD4V6lJse3uKmQVqJj4yIPeyg6efkzIf30NSaJAoGAfV8TCUBiVfePWm1s9Nd4\nbDCtIQZvGMGHyxGwoyg8fo2v3pJQU2b3YIsSfaMKgbmv80H9kqvqSzins+JhbKqy\nrFfZ0U+3l8Mb9h+9Gmv9WeQItqIlkUoS6T+JYinJjEs+rDwy7rXiLm87xSIZkVKm\n7vSGPiQrwyaM2W8C9rMI5Do=\n-----END PRIVATE KEY-----\n",
+  "client_email": "data-logger-134@cse407-power-monitor-app.iam.gserviceaccount.com",
+  "client_id": "116198067091871102712",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/data-logger-134%40cse407-power-monitor-app.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

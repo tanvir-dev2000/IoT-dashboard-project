@@ -1,5 +1,9 @@
 .venv/
 .env/
-service_account/*.json
+.
+.service_account/cse407-power-monitor-app-3e98f52d4951.json
+.backend/cse407-power-monitor-app-3e98f52d4951.json
+.backend/env.py
+
 *.pyc
 __pycache__/
