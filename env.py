@@ -1,0 +1,14 @@
+
+ENDPOINT = "https://openapi.tuyaeu.com"
+ACCESS_ID = "xucp3eudfrnsd8jh944v"
+ACCESS_KEY = "2eb5c56bff5840928ee93f4017bf014f"
+DEVICE_ID = "bf0972698cb43a4707za5c"
+
+USERNAME = "tanvirrahman02122000@gmail.com"
+PASSWORD = "Tr02122000"
+
+SERVICE_ACCOUNT_FILE = 'credentials.json'
+GOOGLE_SHEETS_NAME = 'Data Log'
+SHEET_ID="19XYljUtDynGo5K_1P91lT0pq8jRL-xvNILhiRPAR2tA"
+
+POLLING_INTERVAL_SECONDS = 300

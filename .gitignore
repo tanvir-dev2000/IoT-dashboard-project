@@ -16,7 +16,6 @@ ENV/
 
 credentials.json
 *.env
-env.py
 
 
 *.db
