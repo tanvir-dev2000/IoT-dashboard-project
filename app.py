@@ -6,7 +6,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
-from env import env
+import env
 from backend import tuya_client, storage_manager
 from dashboard.dashboard import dashboard_page
 from dashboard.history import history_page

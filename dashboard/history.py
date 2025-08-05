@@ -2,9 +2,8 @@
 import streamlit as st
 import pandas as pd
 from storage.authenticate_gsheets import get_gsheets_client
-from env import env
+import env
 from datetime import datetime
-import plotly.express as px
 import plotly.graph_objects as go
 
 

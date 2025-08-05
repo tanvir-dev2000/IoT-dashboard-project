@@ -1,10 +1,8 @@
-import logging
 import json
 import time
 import threading
-import datetime
-from tuya_iot import TuyaOpenAPI, TuyaOpenMQ, TUYA_LOGGER
-from env import env
+from tuya_iot import TuyaOpenAPI, TuyaOpenMQ
+import env
 from backend import data_processor
 from backend import storage_manager
 
