@@ -1,7 +1,7 @@
 import json
 import time
 import datetime
-
+from backend.timezone_utils import get_current_time_12hr_for_display
 
 # ... (DP_SPECS, interpret_fault_bitmap) ...
 DP_SPECS = {
@@ -96,7 +96,7 @@ def get_offline_snapshot(device_id, timestamp):
 
     snapshot_data = {
         "timestamp": timestamp,
-        "time_12hr": time.strftime('%I:%M:%S %p', time.localtime()),
+        "time_12hr": get_current_time_12hr_for_display(),
         "device_id": device_id,
         "dp_code_raw": [],
 
@@ -186,7 +186,7 @@ def process_device_data_snapshot(device_id, raw_dp_list, timestamp):
 
     snapshot_data = {
         "timestamp": timestamp,
-        "time_12hr": time.strftime('%I:%M:%S %p', time.localtime()),
+        "time_12hr": get_current_time_12hr_for_display(),
         "device_id": device_id,
         "dp_code_raw": raw_dp_list,
 

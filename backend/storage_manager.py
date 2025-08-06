@@ -1,10 +1,11 @@
+import os
 import sqlite3
 import gspread
 from google.oauth2.service_account import Credentials
 import time
 import datetime
 import json  # Ensure json is imported here at the top
-
+from backend.timezone_utils import get_bangladesh_date_str, get_bangladesh_time_str
 
 _json_dumps_func = json.dumps
 
@@ -110,7 +111,7 @@ def _get_or_create_daily_worksheet():
         print("Storage Manager: Master Google Spreadsheet not available to create daily sheet.")
         return None
 
-    today_date_str = datetime.datetime.now().strftime('%d/%m/%Y')
+    today_date_str = get_bangladesh_date_str()
 
     if _current_daily_worksheet and _current_daily_worksheet.title == today_date_str:
         return _current_daily_worksheet
@@ -124,7 +125,7 @@ def _get_or_create_daily_worksheet():
         worksheet = _master_google_spreadsheet.add_worksheet(title=today_date_str, rows="1000", cols="20")
 
     if not worksheet.row_values(1):
-        worksheet.append_row(DAILY_SHEET_HEADERS)  # <--- DAILY_SHEET_HEADERS is used here
+        worksheet.append_row(DAILY_SHEET_HEADERS)
         print(f"Storage Manager: Headers added to '{today_date_str}'.")
 
     _last_checked_date_str = today_date_str

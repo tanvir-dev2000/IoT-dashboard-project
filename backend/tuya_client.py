@@ -1,10 +1,13 @@
 import json
+import os
 import time
 import threading
 from tuya_iot import TuyaOpenAPI, TuyaOpenMQ
 import env
 from backend import data_processor
 from backend import storage_manager
+from backend.timezone_utils import get_current_time_for_platform
+
 
 TUYA_DEVICE_OFFLINE_CODE = 1106
 TUYA_TOKEN_INVALID_CODE = 1010
@@ -33,7 +36,7 @@ def initialize_tuya_client():
 def _on_message_callback(msg):
     try:
         message_data = msg
-        current_timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+        current_timestamp = get_current_time_for_platform()
 
         if 'data' in message_data and 'status' in message_data['data']:
             dev_id = message_data['data'].get('devId')
@@ -100,7 +103,7 @@ def _get_device_status_poll():
             return False
 
     is_online = device_info.get("result", {}).get("online", False)
-    current_timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+    current_timestamp = get_current_time_for_platform()
 
     if not is_online:
         print(f"Tuya Client: Device {env.DEVICE_ID} is OFFLINE. Using offline snapshot ({current_timestamp}).")
@@ -275,10 +278,9 @@ def get_switch_status_cached():
     """
     Get switch status with basic caching to avoid too many API calls
     """
-    import time
 
 
-    current_time = time.time()
+    current_time = get_current_time_for_platform()
     cache_duration = 10  # Cache for 10 seconds
 
 
