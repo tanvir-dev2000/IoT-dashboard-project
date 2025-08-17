@@ -2,7 +2,7 @@
 ENDPOINT = "https://openapi.tuyaeu.com"
 ACCESS_ID = "xucp3eudfrnsd8jh944v"
 ACCESS_KEY = "2eb5c56bff5840928ee93f4017bf014f"
-DEVICE_ID = "bf0972698cb43a4707za5c"
+DEVICE_ID = "bf92f59ca62e225506gyey"
 
 USERNAME = "tanvirrahman02122000@gmail.com"
 PASSWORD = "Tr02122000"
