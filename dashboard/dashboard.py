@@ -11,7 +11,7 @@ import pandas as pd
 import datetime
 import storage
 from storage import authenticate_gsheets as auth_gsheets
-import env
+import app_config as env
 from gspread.exceptions import WorksheetNotFound
 
 import plotly.express as px
