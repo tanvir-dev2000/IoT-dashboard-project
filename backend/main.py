@@ -3,7 +3,7 @@ import logging
 import time
 import sys
 
-import env
+import app_config as env
 import tuya_client
 import storage_manager
 
