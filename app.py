@@ -16,7 +16,7 @@ sys.path.append(ROOT_DIR)
 sys.path.append(os.path.join(ROOT_DIR, "backend"))
 sys.path.append(os.path.join(ROOT_DIR, "env"))
 
-import env as env
+import app_config as env
 from backend import tuya_client
 from backend import storage_manager
 from dashboard.dashboard import dashboard_page
