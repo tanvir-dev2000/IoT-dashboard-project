@@ -8,7 +8,7 @@ if str(ROOT_DIR) not in sys.path:
 import streamlit as st
 import pandas as pd
 from storage.authenticate_gsheets import get_gsheets_client
-from env import env
+import env
 from datetime import datetime
 
 def calculate_cost(units_kwh):
