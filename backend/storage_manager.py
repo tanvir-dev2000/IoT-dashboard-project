@@ -5,7 +5,7 @@ from google.oauth2.service_account import Credentials
 import time
 import datetime
 import json  # Ensure json is imported here at the top
-import env  # fallback source for SERVICE_ACCOUNT_FILE  # fallback source for SERVICE_ACCOUNT_FILE
+import app_config as env  # fallback source for SERVICE_ACCOUNT_FILE  # fallback source for SERVICE_ACCOUNT_FILE
 
 # --- NEW: Get a direct reference to json.dumps ---
 _json_dumps_func = json.dumps
