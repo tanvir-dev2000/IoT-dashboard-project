@@ -1,7 +1,7 @@
 # tuya/tuya_client.py
 
 import datetime
-from env import env as env
+import env
 import data_processor
 import storage.storage_manager as storage_manager
 from tuya_iot import TuyaOpenAPI
