@@ -1,6 +1,15 @@
+import os
+import sys
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
 import streamlit as st
 import pandas as pd
 import datetime
+import storage
 from storage import authenticate_gsheets as auth_gsheets
 from env import env
 from gspread.exceptions import WorksheetNotFound
@@ -49,7 +58,7 @@ def get_latest_data(client, spreadsheet_name, sheet_name):
 def plot_pretty_line_chart(df, y_column, title, color):
     if y_column in df.columns and "Time" in df.columns:
         df = df.copy()
-        df["Time"] = pd.to_datetime(df["Time"], errors='coerce')
+        df["Time"] = pd.to_datetime(df["Time"], format="%I:%M:%S %p", errors='coerce')
         yvals = pd.to_numeric(df[y_column], errors='coerce')
         if yvals.notnull().any():
             earliest = df["Time"].min().replace(hour=0, minute=0, second=0, microsecond=0)

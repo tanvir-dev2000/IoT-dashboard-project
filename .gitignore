@@ -1,7 +1,8 @@
 .venv/
 .env/
 .
-.service_account/cse407-power-monitor-app-3e98f52d4951.json
+credentials.json
+.backend_pid
 .backend/cse407-power-monitor-app-3e98f52d4951.json
 .backend/env.py
 

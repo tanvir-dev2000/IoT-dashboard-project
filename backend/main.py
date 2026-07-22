@@ -3,25 +3,25 @@ import logging
 import time
 import sys
 
-# Import our modular components
-import env
+from env import env
 import tuya_client
 import storage_manager
 
-# --- Configure Root Logger ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# --- Main execution block ---
+
+
 if __name__ == "__main__":
     print("Main: Starting Tuya IoT Data Logger Application...")
 
-    # 1. Initialize Storage Managers (SQLite and Google Sheets)
     try:
         storage_manager.initialize_storage(
-            db_file='tuya_device_data.db',
-            google_sheets_key_file=env.GOOGLE_SHEETS_KEY_FILE,
-            google_sheet_name=env.GOOGLE_SHEET_NAME,
+            db_file='../tuya_device_data.db',
+            google_sheets_key_file=env.SERVICE_ACCOUNT_FILE,
+            google_sheet_name=env.GOOGLE_SHEETS_NAME,
         )
+
+
     except Exception as e:
         print(f"Main: Error initializing storage: {e}")
         sys.exit(1)
@@ -32,14 +32,12 @@ if __name__ == "__main__":
         storage_manager.close_storage()
         sys.exit(1)
 
-    # 3. Start MQTT Listener for Real-time Updates
     if not tuya_client.start_mqtt_listener():
         print("Main: Failed to start MQTT listener. Exiting.")
         tuya_client.stop_tuya_client()
         storage_manager.close_storage()
         sys.exit(1)
 
-    # 4. Start Polling Loop (Optional, based on env.POLLING_INTERVAL_SECONDS)
     if env.POLLING_INTERVAL_SECONDS > 0:
         tuya_client.start_polling_loop()
     else:

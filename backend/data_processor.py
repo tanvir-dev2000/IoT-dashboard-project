@@ -3,7 +3,8 @@ import json
 import time
 import datetime  # Import datetime for timestamp comparison
 
-
+# --- DP Definitions (Keep as is) ---
+# ... (DP_SPECS, interpret_fault_bitmap) ...
 DP_SPECS = {
     "total_forward_energy": {"name": "正向总有功电量 (Total Forward Energy)", "type": "Integer", "scale": 100,
                              "unit": "kWh"},
@@ -47,9 +48,9 @@ def interpret_fault_bitmap(value, labels):
     return ", ".join(active_alarms)
 
 
-
+# --- Global variable to store the last known state of critical DPs ---
 _last_known_device_state = {
-    "switch": "N/A",
+    "switch": "N/A",  # Default for Breaker Switch
     "output_voltage": "N/A",
     "supply_frequency": "N/A",
     "output_current": "N/A",
@@ -57,13 +58,15 @@ _last_known_device_state = {
     "power_factor": "N/A",
 }
 
-
+# --- Global variable to store the last timestamp when *actual* data was received ---
+# This helps detect stale data.
 _last_actual_data_timestamp = None
 
-
+# --- Global variable to store the last snapshot sent to Google Sheets ---
 _last_gs_snapshot_sent = {}
 
 
+# --- Helper function to initialize/reset the last known state ---
 def initialize_dp_state():
     global _last_known_device_state, _last_gs_snapshot_sent, _last_actual_data_timestamp
     _last_known_device_state = {
@@ -75,13 +78,15 @@ def initialize_dp_state():
         "power_factor": "N/A",
     }
     _last_gs_snapshot_sent = {}
-    _last_actual_data_timestamp = None
+    _last_actual_data_timestamp = None  # Reset this on init
 
 
+# --- Function to generate a 'device offline' snapshot ---
+# This is called by tuya_client if API call fails or if data is detected as stale.
 def get_offline_snapshot(device_id, timestamp):
     global _last_known_device_state, _last_actual_data_timestamp
 
-
+    # Update global state to reflect offline status
     _last_known_device_state["switch"] = "OFF"
     _last_known_device_state["output_voltage"] = 0.0
     _last_known_device_state["supply_frequency"] = 0.0
@@ -89,14 +94,14 @@ def get_offline_snapshot(device_id, timestamp):
     _last_known_device_state["output_power"] = 0.0
     _last_known_device_state["power_factor"] = 0.0
 
-    _last_actual_data_timestamp = None
+    _last_actual_data_timestamp = None  # Reset actual data timestamp if we force offline
 
-
+    # Construct the snapshot data from the updated global state
     snapshot_data = {
         "timestamp": timestamp,
         "time_12hr": time.strftime('%I:%M:%S %p', time.localtime()),
         "device_id": device_id,
-        "dp_code_raw": [],
+        "dp_code_raw": [],  # No raw DPs when offline (for this snapshot)
 
         "Breaker Switch": "OFF",
         "Voltage (V)": 0.0,
@@ -105,7 +110,7 @@ def get_offline_snapshot(device_id, timestamp):
         "Active Power (kW)": 0.0,
         "Power Factor": 0.0,
     }
-
+    # Individual DP records for SQLite for offline entry
     individual_dp_records = [
         {"timestamp": timestamp, "device_id": device_id, "dp_code": "switch", "dp_name": "Breaker Switch",
          "dp_value_display": "OFF", "dp_value_save": "OFF", "dp_unit": "", "dp_type": "Boolean"},
@@ -125,16 +130,18 @@ def get_offline_snapshot(device_id, timestamp):
     return snapshot_data, individual_dp_records
 
 
+# --- Function to Process Raw Data into a Fixed-Column Snapshot AND Individual Records ---
+# This function UPDATES a global state and constructs the snapshot from that state
 def process_device_data_snapshot(device_id, raw_dp_list, timestamp):
-    global _last_known_device_state, _last_actual_data_timestamp
+    global _last_known_device_state, _last_actual_data_timestamp  # Declare global to modify them
 
     individual_dp_records = []
 
-
+    # Only update _last_actual_data_timestamp if we received *any* DPs
     if raw_dp_list:
         _last_actual_data_timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
 
-
+    # First, update _last_known_device_state with new incoming DPs
     for dp_change in raw_dp_list:
         dp_code = dp_change.get('code')
         dp_value_raw = dp_change.get('value')
@@ -181,7 +188,7 @@ def process_device_data_snapshot(device_id, raw_dp_list, timestamp):
                 "dp_value_save": dp_value_raw, "dp_unit": "", "dp_type": "Unknown"
             })
 
-
+    # Now, construct the snapshot data for Google Sheets from the *entire* _last_known_device_state
     snapshot_data = {
         "timestamp": timestamp,
         "time_12hr": time.strftime('%I:%M:%S %p', time.localtime()),
@@ -196,7 +203,8 @@ def process_device_data_snapshot(device_id, raw_dp_list, timestamp):
         "Power Factor": _last_known_device_state.get("power_factor", "N/A"),
     }
 
-
+    # --- Override numerical values to 0 if Breaker Switch is OFF ---
+    # This also applies if device becomes offline and get_offline_snapshot forces the switch to OFF
     if snapshot_data["Breaker Switch"] == "OFF":
         if snapshot_data["Voltage (V)"] != "N/A": snapshot_data["Voltage (V)"] = 0.0
         if snapshot_data["Frequency (Hz)"] != "N/A": snapshot_data["Frequency (Hz)"] = 0.0
@@ -207,7 +215,7 @@ def process_device_data_snapshot(device_id, raw_dp_list, timestamp):
     return snapshot_data, individual_dp_records
 
 
-
+# --- Function for cleaner console output (Keep as is) ---
 def print_clean_snapshot(snapshot_data):
     print(f"  Time: {snapshot_data['time_12hr']}")
     print(

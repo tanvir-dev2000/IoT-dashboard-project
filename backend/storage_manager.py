@@ -5,6 +5,7 @@ from google.oauth2.service_account import Credentials
 import time
 import datetime
 import json  # Ensure json is imported here at the top
+import env.env as env  # fallback source for SERVICE_ACCOUNT_FILE
 
 # --- NEW: Get a direct reference to json.dumps ---
 _json_dumps_func = json.dumps
@@ -59,6 +60,7 @@ def initialize_storage(db_file, google_sheets_key_file, google_sheet_name, imper
     _db_file = db_file
     _google_sheets_key_file = google_sheets_key_file
     _google_sheet_name = google_sheet_name
+    print(f"Storage Manager: initialize_storage called with db_file={db_file}, google_sheets_key_file={google_sheets_key_file}, google_sheet_name={google_sheet_name}")
     _impersonated_user_email = impersonated_user_email
 
     _setup_sqlite_db()
@@ -139,11 +141,40 @@ def _get_or_create_daily_worksheet():
 
 
 def _setup_google_sheets():
-    global _gspread_gc, _master_google_spreadsheet, _dp_worksheets, _raw_log_worksheet, _current_daily_worksheet, _last_checked_date_str
+    global _gspread_gc, _master_google_spreadsheet, _dp_worksheets, _raw_log_worksheet, _current_daily_worksheet, _last_checked_date_str, _google_sheets_key_file, _google_sheet_name
     try:
+        print(f"Storage Manager: _setup_google_sheets start: _google_sheets_key_file={_google_sheets_key_file}, _google_sheet_name={_google_sheet_name}")
         scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 
-        creds = Credentials.from_service_account_file(_google_sheets_key_file, scopes=scope)
+        # If the stored key file is None (reconnect case), try falling back to env value
+        if _google_sheets_key_file is None:
+            print("Storage Manager: _google_sheets_key_file is None, attempting fallback to env.SERVICE_ACCOUNT_FILE")
+            try:
+                fallback = getattr(env, 'SERVICE_ACCOUNT_FILE', None)
+            except Exception:
+                fallback = None
+            if fallback:
+                print(f"Storage Manager: Falling back to SERVICE_ACCOUNT_FILE from env: {fallback}")
+                _google_sheets_key_file = fallback
+
+        if _google_sheets_key_file is None:
+            raise ValueError("No Google service account key file configured (google_sheets_key_file is None)")
+
+        # If the configured spreadsheet name was lost, fall back to env
+        if _google_sheet_name is None:
+            try:
+                fallback_name = getattr(env, 'GOOGLE_SHEETS_NAME', None)
+            except Exception:
+                fallback_name = None
+            if fallback_name:
+                print(f"Storage Manager: Falling back to GOOGLE_SHEETS_NAME from env: {fallback_name}")
+                _google_sheet_name = fallback_name
+
+        try:
+            creds = Credentials.from_service_account_file(_google_sheets_key_file, scopes=scope)
+        except Exception as cred_exc:
+            print(f"Storage Manager: Failed to load service account file '{_google_sheets_key_file}': {cred_exc}")
+            raise
         # Impersonation block removed for workaround (already done in your code)
 
         _gspread_gc = gspread.authorize(creds)
@@ -190,51 +221,54 @@ def _setup_google_sheets():
 
 
 def insert_data_into_google_sheet(snapshot_data):
+    global _master_google_spreadsheet, _current_daily_worksheet, _last_checked_date_str
+
     if _master_google_spreadsheet is None:
-        print("Storage Manager: Master Google Sheet not connected. Cannot insert data.")
-        return False
+        print("Storage Manager: Master Google Sheet not connected. Attempting to reconnect...")
+        _setup_google_sheets()  # Try to reconnect
+        if _master_google_spreadsheet is None:
+            print("Storage Manager: Still cannot connect to Google Sheets. Skipping insert.")
+            return False
 
     try:
-        # --- Check for daily sheet rotation ---
+        # Check for daily sheet rotation
         today_date_str = datetime.datetime.now().strftime('%d/%m/%Y')
-        if today_date_str != _last_checked_date_str:
-            print(f"Storage Manager: New day detected ({today_date_str}). Switching to new daily sheet...")
-            _get_or_create_daily_worksheet()
-            if _current_daily_worksheet is None:
-                print("Storage Manager: Failed to get/create daily sheet for new day. Skipping Google Sheets insert.")
-                return False
+        if today_date_str != _last_checked_date_str or _current_daily_worksheet is None:
+            print(
+                f"Storage Manager: New day detected ({today_date_str}) or worksheet missing. Switching to new daily sheet...")
+            _current_daily_worksheet = _get_or_create_daily_worksheet()
 
-        # --- 1. Insert into Raw Log Sheet (all data) ---
-        raw_log_row = [
-            snapshot_data['timestamp'],
-            snapshot_data['device_id'],
-            _json_dumps_func(snapshot_data['dp_code_raw']),
-            "N/A",
-            "N/A",
-            "N/A",
-            "N/A"
-        ]
+        if _current_daily_worksheet is None:
+            print("Storage Manager: Failed to get/create daily sheet. Skipping Google Sheets insert.")
+            return False
+
+        # Insert into Raw Log Sheet (if available)
         if _raw_log_worksheet:
-            _raw_log_worksheet.append_row(raw_log_row)
-        else:
-            print(f"Storage Manager: Raw log sheet not available. Raw data not saved to GS.")
-
-        # --- 2. Insert into Current Daily Sheet (fixed columns) ---
-        if _current_daily_worksheet:
-            daily_row = [
-                snapshot_data["time_12hr"],
-                snapshot_data["Breaker Switch"],
-                snapshot_data["Voltage (V)"],
-                snapshot_data["Frequency (Hz)"],
-                snapshot_data["Current (A)"],
-                snapshot_data["Active Power (kW)"],
-                snapshot_data["Power Factor"]
+            raw_log_row = [
+                snapshot_data['timestamp'],
+                snapshot_data['device_id'],
+                _json_dumps_func(snapshot_data['dp_code_raw']),
+                "Snapshot Data",
+                "Multiple Values",
+                "Various",
+                "Snapshot"
             ]
-            _current_daily_worksheet.append_row(daily_row)
-        else:
-            print(f"Storage Manager: Daily sheet not available. Fixed-column data not saved to GS.")
+            _raw_log_worksheet.append_row(raw_log_row)
 
+        # Insert into Current Daily Sheet
+        daily_row = [
+            snapshot_data["time_12hr"],
+            snapshot_data["Breaker Switch"],
+            snapshot_data["Voltage (V)"],
+            snapshot_data["Frequency (Hz)"],
+            snapshot_data["Current (A)"],
+            snapshot_data["Active Power (kW)"],
+            snapshot_data["Power Factor"]
+        ]
+        _current_daily_worksheet.append_row(daily_row)
+        print(f"Storage Manager: Successfully inserted data to Google Sheets at {snapshot_data['time_12hr']}")
         return True
+
     except Exception as e:
         print(f"Storage Manager: Error inserting data into Google Sheet: {e}")
         return False
