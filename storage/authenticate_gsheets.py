@@ -3,7 +3,7 @@ import json
 import streamlit as st
 import gspread
 from google.oauth2.service_account import Credentials
-import env
+import app_config as env
 
 SCOPES = [
     "https://spreadsheets.google.com/feeds",
