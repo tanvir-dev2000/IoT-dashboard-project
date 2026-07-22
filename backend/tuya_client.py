@@ -6,7 +6,7 @@ import time
 import threading
 import datetime
 from tuya_iot import TuyaOpenAPI, TuyaOpenMQ, TUYA_LOGGER
-import env
+import app_config as env
 import data_processor
 import storage_manager
 
